@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { isAdmin } from "../../../../lib/auth";
-import { readJobs, updateJobs } from "../../../../lib/store";
+import { isAdmin } from "../../../lib/auth";
+import { readJobs, updateJobs } from "../../../lib/store";
 
 const STATUSES = ["Applied", "Interview", "Offer", "Rejected"];
 
@@ -27,9 +27,25 @@ export async function POST(request) {
   const jd = String(body.jd || "").slice(0, 20000);
   const status = STATUSES.includes(body.status) ? body.status : "Applied";
 
+  // Application link: add https:// if missing, and make sure it is a real URL
+  let link = String(body.link || "").trim().slice(0, 500);
+  if (link && !/^https?:\/\//i.test(link)) link = `https://${link}`;
+  if (link) {
+    try {
+      new URL(link);
+    } catch {
+      return bad("Application link is not a valid URL.");
+    }
+  }
+
+  const email = String(body.email || "").trim().slice(0, 200);
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return bad("Email address is not valid.");
+  }
+
   if (!company || !role) return bad("Company and role are required.");
 
-  const job = { id: randomUUID(), company, role, date, status, jd };
+  const job = { id: randomUUID(), company, role, date, status, link, email, jd };
   const jobs = await updateJobs((list) => [job, ...list]);
   return NextResponse.json({ jobs });
 }

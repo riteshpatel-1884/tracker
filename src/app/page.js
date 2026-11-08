@@ -51,7 +51,18 @@ async function api(url, options = {}) {
   return data;
 }
 
-const emptyForm = { company: "", role: "", date: "", status: "Applied", jd: "" };
+const emptyForm = {
+  company: "",
+  role: "",
+  date: "",
+  status: "Applied",
+  link: "",
+  email: "",
+  jd: "",
+};
+
+// Only allow normal web links in href
+const isWebLink = (v) => /^https?:\/\//i.test(v || "");
 
 export default function Home() {
   const [jobs, setJobs] = useState([]);
@@ -304,6 +315,27 @@ export default function Home() {
               ))}
             </select>
           </label>
+          <label className="jt-field">
+            <span>Application link</span>
+            <input
+              type="text"
+              inputMode="url"
+              name="link"
+              placeholder="https://company.com/careers/123"
+              value={form.link}
+              onChange={handleChange}
+            />
+          </label>
+          <label className="jt-field">
+            <span>HR / company email</span>
+            <input
+              type="email"
+              name="email"
+              placeholder="hr@company.com"
+              value={form.email}
+              onChange={handleChange}
+            />
+          </label>
           <label className="jt-field jt-full">
             <span>Job description</span>
             <textarea
@@ -365,6 +397,7 @@ export default function Home() {
                   <th>Role</th>
                   <th>Applied on (IST)</th>
                   <th>Status</th>
+                  <th>Links</th>
                   {isAdmin && <th />}
                 </tr>
               </thead>
@@ -413,6 +446,19 @@ export default function Home() {
                         >
                           {job.status}
                         </span>
+                      )}
+                    </td>
+                    <td className="jt-links">
+                      {isWebLink(job.link) && (
+                        <a href={job.link} target="_blank" rel="noopener noreferrer">
+                          Application link
+                        </a>
+                      )}
+                      {job.email && (
+                        <a href={`mailto:${job.email}`}>{job.email}</a>
+                      )}
+                      {!isWebLink(job.link) && !job.email && (
+                        <span className="jt-none">-</span>
                       )}
                     </td>
                     {isAdmin && (

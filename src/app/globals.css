@@ -509,3 +509,31 @@ html[data-theme] body {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* ===== Links column ===== */
+.jt-links {
+  font-size: 0.85rem;
+}
+
+.jt-links a {
+  display: block;
+  color: var(--jt-accent);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.jt-links a:hover {
+  text-decoration: underline;
+}
+
+.jt-links a + a {
+  margin-top: 4px;
+}
+
+.jt-none {
+  color: var(--jt-muted);
+}
+
+.jt-table-card {
+  min-width: 860px;
+}
