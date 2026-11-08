@@ -1,206 +1,511 @@
-.main {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 40px 20px 80px;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  color: #1c2b2d;
+/* ===== Job tracker styles =====
+   Add this to your existing app/globals.css (already imported in layout.js).
+   All classes are prefixed with "jt-" so they won't clash with anything else. */
+
+/* ---- Theme colours ---- */
+:root,
+html[data-theme="light"] {
+  --jt-bg: #f4f7f7;
+  --jt-surface: #ffffff;
+  --jt-text: #17282a;
+  --jt-muted: #5f7174;
+  --jt-border: #d5dedf;
+  --jt-row-border: #e8eeee;
+  --jt-row-hover: #f5f9f9;
+  --jt-strong: #17282a;
+  --jt-strong-text: #ffffff;
+  --jt-accent: #0f7a7a;
+  --jt-accent-hover: #0b6060;
+  --jt-accent-soft: #dff1f1;
+  --jt-danger: #b03a3a;
+  --jt-shadow: rgba(16, 40, 42, 0.16);
+  --jt-card-shadow: 0 1px 2px rgba(16, 40, 42, 0.06);
+
+  --jt-applied-bg: #e3ecf5;
+  --jt-applied-text: #1d4a7a;
+  --jt-interview-bg: #fdf0d2;
+  --jt-interview-text: #7a5200;
+  --jt-offer-bg: #d8f0e0;
+  --jt-offer-text: #1a6a38;
+  --jt-rejected-bg: #f6dcdc;
+  --jt-rejected-text: #8a2a2a;
+
+  color-scheme: light;
 }
 
-.title {
+html[data-theme="dark"] {
+  --jt-bg: #0b1112;
+  --jt-surface: #152022;
+  --jt-text: #e6eeee;
+  --jt-muted: #92a3a5;
+  --jt-border: #2f4346;
+  --jt-row-border: #223033;
+  --jt-row-hover: #1a282a;
+  --jt-strong: #e6eeee;
+  --jt-strong-text: #0b1112;
+  --jt-accent: #3fbfbf;
+  --jt-accent-hover: #5fd3d3;
+  --jt-accent-soft: #1b3739;
+  --jt-danger: #ff8a8a;
+  --jt-shadow: rgba(0, 0, 0, 0.6);
+  --jt-card-shadow: none;
+
+  --jt-applied-bg: #1d3550;
+  --jt-applied-text: #9cc7f2;
+  --jt-interview-bg: #4a3a12;
+  --jt-interview-text: #f5cf70;
+  --jt-offer-bg: #17402a;
+  --jt-offer-text: #7fe0a4;
+  --jt-rejected-bg: #4a2121;
+  --jt-rejected-text: #ff9c9c;
+
+  color-scheme: dark;
+}
+
+/* Page background follows the theme (overrides default body background) */
+html[data-theme] body {
+  background: var(--jt-bg);
+  color: var(--jt-text);
+}
+
+.jt-main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 36px 20px 80px;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--jt-text);
+}
+
+.jt-main button,
+.jt-main input,
+.jt-main select,
+.jt-main textarea {
+  font: inherit;
+}
+
+.jt-main button:focus-visible,
+.jt-main input:focus-visible,
+.jt-main select:focus-visible,
+.jt-main textarea:focus-visible,
+.jt-hover-target:focus-visible {
+  outline: 2px solid var(--jt-accent);
+  outline-offset: 2px;
+}
+
+/* Header */
+.jt-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.jt-title {
   font-size: 2rem;
+  line-height: 1.2;
   margin: 0 0 4px;
 }
 
-.sub {
-  margin: 0 0 28px;
-  color: #5b6b6e;
+.jt-sub {
+  margin: 0;
+  color: var(--jt-muted);
+}
+
+.jt-theme-toggle {
+  padding: 8px 16px;
+  border: 1px solid var(--jt-border);
+  border-radius: 999px;
+  background: var(--jt-surface);
+  color: var(--jt-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.jt-theme-toggle:hover {
+  border-color: var(--jt-accent);
+}
+
+/* Stat cards */
+.jt-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.jt-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  background: var(--jt-surface);
+  border: 1px solid var(--jt-border);
+  border-radius: 10px;
+  box-shadow: var(--jt-card-shadow);
+}
+
+.jt-stat-num {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.jt-stat-label {
+  font-size: 0.85rem;
+  color: var(--jt-muted);
+}
+
+.jt-num-applied { color: var(--jt-applied-text); }
+.jt-num-interview { color: var(--jt-interview-text); }
+.jt-num-offer { color: var(--jt-offer-text); }
+.jt-num-rejected { color: var(--jt-rejected-text); }
+
+/* Cards */
+.jt-card {
+  background: var(--jt-surface);
+  border: 1px solid var(--jt-border);
+  border-radius: 12px;
+  box-shadow: var(--jt-card-shadow);
+}
+
+.jt-card-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 1.1rem;
 }
 
 /* Form */
-.form {
+.jt-form {
   display: grid;
-  grid-template-columns: 1fr 1fr 150px 140px;
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+  padding: 20px;
   margin-bottom: 28px;
 }
 
-.form input,
-.form select,
-.form textarea {
-  padding: 10px 12px;
-  border: 1px solid #c9d3d4;
-  border-radius: 6px;
-  font: inherit;
-  background: #fff;
+.jt-full {
+  grid-column: 1 / -1;
 }
 
-.form textarea {
-  grid-column: 1 / -1;
+.jt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--jt-muted);
+}
+
+.jt-field input,
+.jt-field select,
+.jt-field textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--jt-border);
+  border-radius: 8px;
+  color: var(--jt-text);
+  background: var(--jt-bg);
+  font-weight: 400;
+  font-size: 0.95rem;
+}
+
+.jt-field textarea {
   resize: vertical;
 }
 
-.form button {
-  grid-column: 1 / -1;
-  justify-self: start;
-  padding: 10px 18px;
+.jt-form-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.jt-primary {
+  padding: 10px 20px;
   border: 0;
-  border-radius: 6px;
-  background: #0f6b6b;
-  color: #fff;
-  font: inherit;
+  border-radius: 8px;
+  background: var(--jt-accent);
+  color: var(--jt-strong-text);
   font-weight: 600;
   cursor: pointer;
 }
 
-.form button:hover {
-  background: #0b5555;
+.jt-primary:hover {
+  background: var(--jt-accent-hover);
 }
 
-/* Filters */
-.filters {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-
-.filters button {
-  padding: 6px 14px;
-  border: 1px solid #c9d3d4;
-  border-radius: 999px;
-  background: #fff;
-  font: inherit;
+.jt-ghost {
+  padding: 10px 16px;
+  border: 1px solid var(--jt-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--jt-text);
   cursor: pointer;
 }
 
-.filters button.activeFilter {
-  background: #1c2b2d;
-  border-color: #1c2b2d;
-  color: #fff;
+.jt-ghost:hover {
+  border-color: var(--jt-accent);
 }
 
-.empty {
-  padding: 32px 0;
-  color: #5b6b6e;
+/* Filters */
+.jt-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
 }
 
-/* Table (no overflow hidden here, so the popup is never clipped) */
-.tableWrap {
+.jt-filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid var(--jt-border);
+  border-radius: 999px;
+  background: var(--jt-surface);
+  color: var(--jt-text);
+  cursor: pointer;
+}
+
+.jt-filters button:hover {
+  border-color: var(--jt-accent);
+}
+
+.jt-filters button.jt-active-filter {
+  background: var(--jt-strong);
+  border-color: var(--jt-strong);
+  color: var(--jt-strong-text);
+}
+
+.jt-pill-count {
+  font-size: 0.75rem;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--jt-accent-soft);
+  color: var(--jt-text);
+}
+
+.jt-active-filter .jt-pill-count {
+  background: rgba(255, 255, 255, 0.22);
+  color: inherit;
+}
+
+.jt-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--jt-muted);
+}
+
+/* Table. The scroll wrapper has bottom room so the popup is never clipped. */
+.jt-table-scroll {
   overflow-x: auto;
-  padding-bottom: 260px; /* room so the popup on the last rows is visible */
-  margin-bottom: -260px;
+  padding-bottom: 280px;
+  margin-bottom: -280px;
 }
 
-.table {
+.jt-table-card {
+  min-width: 720px;
+}
+
+.jt-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.table th {
+.jt-table th {
   text-align: left;
-  font-size: 0.85rem;
-  color: #5b6b6e;
+  font-size: 0.8rem;
+  color: var(--jt-muted);
   font-weight: 600;
-  padding: 8px 10px;
-  border-bottom: 2px solid #1c2b2d;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--jt-border);
 }
 
-.table td {
-  padding: 12px 10px;
-  border-bottom: 1px solid #e3e9ea;
+.jt-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--jt-row-border);
   vertical-align: middle;
 }
 
-.company {
+.jt-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.jt-table tbody tr:hover {
+  background: var(--jt-row-hover);
+}
+
+.jt-company-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.jt-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--jt-accent-soft);
+  color: var(--jt-accent);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.jt-company {
   font-weight: 600;
 }
 
+.jt-date {
+  white-space: nowrap;
+  color: var(--jt-muted);
+  font-size: 0.9rem;
+}
+
 /* Hover popup showing the JD */
-.hoverTarget {
+.jt-hover-target {
   position: relative;
   display: inline-block;
   cursor: help;
-  border-bottom: 1px dashed #0f6b6b;
+  border-bottom: 1px dashed var(--jt-accent);
 }
 
-.popup {
+.jt-popup {
   display: none;
   position: absolute;
   top: 100%;
   left: 0;
   z-index: 20;
-  width: 420px;
+  width: 440px;
   max-width: 80vw;
-  max-height: 260px;
-  overflow-y: auto;
-  margin-top: 6px;
-  padding: 14px 16px;
-  background: #fff;
-  border: 1px solid #c9d3d4;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+  background: var(--jt-surface);
+  color: var(--jt-text);
+  border: 1px solid var(--jt-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px var(--jt-shadow);
   font-size: 0.9rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
+  line-height: 1.55;
   font-weight: 400;
   cursor: auto;
+  overflow: hidden;
 }
 
-.popup strong {
+.jt-popup-head {
   display: block;
-  margin-bottom: 8px;
+  padding: 12px 16px;
+  font-weight: 600;
+  background: var(--jt-accent-soft);
+  border-bottom: 1px solid var(--jt-border);
 }
 
-.hoverTarget:hover .popup,
-.hoverTarget:focus .popup {
+.jt-popup-body {
+  display: block;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 12px 16px;
+  white-space: pre-wrap;
+}
+
+.jt-hover-target:hover .jt-popup,
+.jt-hover-target:focus .jt-popup {
   display: block;
 }
 
 /* Status dropdown colours */
-.status {
-  padding: 5px 10px;
+.jt-status {
+  padding: 5px 12px;
   border: 1px solid transparent;
   border-radius: 999px;
-  font: inherit;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
 }
 
-.applied {
-  background: #e3ecf5;
-  color: #1d4a7a;
-}
+.jt-status-applied { background: var(--jt-applied-bg); color: var(--jt-applied-text); }
+.jt-status-interview { background: var(--jt-interview-bg); color: var(--jt-interview-text); }
+.jt-status-offer { background: var(--jt-offer-bg); color: var(--jt-offer-text); }
+.jt-status-rejected { background: var(--jt-rejected-bg); color: var(--jt-rejected-text); }
 
-.interview {
-  background: #fdf0d2;
-  color: #7a5200;
-}
-
-.offer {
-  background: #d8f0e0;
-  color: #1a6a38;
-}
-
-.rejected {
-  background: #f6dcdc;
-  color: #8a2a2a;
-}
-
-.delete {
+.jt-delete {
   border: 0;
   background: none;
-  color: #8a2a2a;
-  font: inherit;
+  color: var(--jt-danger);
   cursor: pointer;
 }
 
-.delete:hover {
+.jt-delete:hover {
   text-decoration: underline;
 }
 
 @media (max-width: 700px) {
-  .form {
+  .jt-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .jt-form {
     grid-template-columns: 1fr;
   }
+}
+
+/* ===== Admin / login additions ===== */
+.jt-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.jt-badge {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--jt-border);
+  color: var(--jt-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.jt-badge-admin {
+  background: var(--jt-accent-soft);
+  border-color: transparent;
+  color: var(--jt-accent);
+}
+
+.jt-login {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  margin-bottom: 20px;
+  max-width: 420px;
+}
+
+.jt-login input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--jt-border);
+  border-radius: 8px;
+  background: var(--jt-bg);
+  color: var(--jt-text);
+}
+
+.jt-error {
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  background: var(--jt-rejected-bg);
+  color: var(--jt-rejected-text);
+  font-size: 0.9rem;
+}
+
+.jt-status-static {
+  display: inline-block;
+  cursor: default;
+}
+
+.jt-main button:disabled,
+.jt-main select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
