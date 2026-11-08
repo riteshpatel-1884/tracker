@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { isAdmin } from "../../../lib/auth";
-import { readJobs, updateJobs } from "../../../lib/store";
+import { readJobs, updateJobs } from "../../../../lib/store";
 
 const STATUSES = ["Applied", "Interview", "Offer", "Rejected"];
 
