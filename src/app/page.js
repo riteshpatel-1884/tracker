@@ -73,6 +73,8 @@ export default function Home() {
 
   const [form, setForm] = useState(emptyForm);
   const [filter, setFilter] = useState("All");
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("newest");
 
   const [showLogin, setShowLogin] = useState(false);
   const [password, setPassword] = useState("");
@@ -197,14 +199,41 @@ export default function Home() {
     });
   };
 
+  // Search: every word you type must match somewhere in the application
+  const terms = search.toLowerCase().split(/\s+/).filter(Boolean);
+  const matchesSearch = (j) => {
+    if (terms.length === 0) return true;
+    const hay = [j.company, j.role, j.status, j.email, j.link, j.jd]
+      .join(" ")
+      .toLowerCase();
+    return terms.every((t) => hay.includes(t));
+  };
+
+  const searched = jobs.filter(matchesSearch);
+  // Pill counts follow the search, stat cards always show overall totals
   const count = (s) => jobs.filter((j) => j.status === s).length;
+  const pillCount = (s) =>
+    s === "All" ? searched.length : searched.filter((j) => j.status === s).length;
+
+  const sorters = {
+    newest: (a, b) => (b.date || "").localeCompare(a.date || ""),
+    oldest: (a, b) => (a.date || "").localeCompare(b.date || ""),
+    company: (a, b) => a.company.localeCompare(b.company, undefined, { sensitivity: "base" }),
+    status: (a, b) => STATUSES.indexOf(a.status) - STATUSES.indexOf(b.status),
+  };
 
   const visible = (filter === "All"
-    ? jobs
-    : jobs.filter((j) => j.status === filter)
+    ? searched
+    : searched.filter((j) => j.status === filter)
   )
     .slice()
-    .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    .sort(sorters[sort]);
+
+  const hasActiveFilters = search.trim() !== "" || filter !== "All";
+  const clearFilters = () => {
+    setSearch("");
+    setFilter("All");
+  };
 
   return (
     <main className="jt-main">
@@ -361,6 +390,39 @@ export default function Home() {
         </form>
       )}
 
+      <div className="jt-toolbar">
+        <div className="jt-search">
+          <input
+            type="search"
+            placeholder="Search company, role, email, job description…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label="Search applications"
+          />
+          {search && (
+            <button
+              type="button"
+              className="jt-search-clear"
+              onClick={() => setSearch("")}
+              aria-label="Clear search"
+            >
+              ×
+            </button>
+          )}
+        </div>
+        <select
+          className="jt-sort"
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          aria-label="Sort applications"
+        >
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="company">Company A–Z</option>
+          <option value="status">By status</option>
+        </select>
+      </div>
+
       <div className="jt-filters">
         {["All", ...STATUSES].map((s) => (
           <button
@@ -370,12 +432,21 @@ export default function Home() {
             className={filter === s ? "jt-active-filter" : ""}
           >
             {s}
-            <span className="jt-pill-count">
-              {s === "All" ? jobs.length : count(s)}
-            </span>
+            <span className="jt-pill-count">{pillCount(s)}</span>
           </button>
         ))}
+        {hasActiveFilters && (
+          <button type="button" className="jt-clear" onClick={clearFilters}>
+            Clear filters
+          </button>
+        )}
       </div>
+
+      {loaded && jobs.length > 0 && (
+        <p className="jt-result-count" aria-live="polite">
+          Showing {visible.length} of {jobs.length}
+        </p>
+      )}
 
       {!loaded ? (
         <div className="jt-card jt-empty">Loading applications…</div>
@@ -385,7 +456,11 @@ export default function Home() {
             ? isAdmin
               ? "No applications yet. Add your first one above."
               : "No applications yet."
-            : `No applications with status "${filter}".`}
+            : search.trim()
+              ? `No applications match "${search.trim()}"${
+                  filter !== "All" ? ` with status "${filter}"` : ""
+                }.`
+              : `No applications with status "${filter}".`}
         </div>
       ) : (
         <div className="jt-table-scroll">

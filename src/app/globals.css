@@ -537,3 +537,73 @@ html[data-theme] body {
 .jt-table-card {
   min-width: 860px;
 }
+
+/* ===== Search + sort toolbar ===== */
+.jt-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.jt-search {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+
+.jt-search input,
+.jt-sort {
+  padding: 10px 12px;
+  border: 1px solid var(--jt-border);
+  border-radius: 8px;
+  background: var(--jt-surface);
+  color: var(--jt-text);
+  font-size: 0.95rem;
+}
+
+.jt-search input {
+  width: 100%;
+  padding-right: 36px;
+  box-sizing: border-box;
+}
+
+.jt-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.jt-search-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--jt-muted);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.jt-search-clear:hover {
+  color: var(--jt-text);
+  background: var(--jt-accent-soft);
+}
+
+.jt-sort {
+  cursor: pointer;
+}
+
+.jt-filters button.jt-clear {
+  border-style: dashed;
+  color: var(--jt-muted);
+}
+
+.jt-result-count {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  color: var(--jt-muted);
+}
